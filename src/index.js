@@ -13,21 +13,58 @@ const Router = require('koa-router');
 const koa = new Koa();
 var router = new Router();
 
+let users = [
+  {
+    name: 'Elizabeth Swann',
+    email: 'swann@example.com',
+    age: '25',
+  },
+  {
+    name: 'Will Turner',
+    email: 'turner@example.com',
+    age: '22',
+  },
+  {
+    name: 'Hector Barbossa',
+    email: 'barbossa@example.com',
+    age: '50',
+  },
+];
+
 //rota simples pra testar se o servidor está online
 router.get('/', async (ctx) => {
   ctx.body = `Seu servidor esta rodando em http://localhost:${PORT}`; //http://localhost:3000/
 });
 
-//Uma rota de exemplo simples aqui.
 //As rotas devem ficar em arquivos separados, /src/controllers/userController.js por exemplo
-router.get('/users', async (ctx) => {
-    ctx.status = 200;
-    ctx.body = {total:0, count: 0, rows:[]}
+
+//rota que lista todos os usuarios
+router.get('/users', (ctx) => {
+  ctx.status = 200;
+  ctx.body = users
 });
 
+//rota que lista um usuario por id
+router.get('/user/:id', (ctx) => {
+  ctx.status = 200;
+  ctx.body = users[ctx.params.id]
+});
+
+//rota que edita um usuario já existente
+router.post('/userUpdate/:id', (ctx) => {
+  ctx.body = Object.assign(users[ctx.params.id], ctx.request.body);
+});
+
+//rota que cria um usuario novo, preciso colocar pra ele mostrar todos juntos depois também
+router.post('/user/:id', (ctx) => {});
+
+//rota que deleta um usuario já existente
+router.delete('/user/:id', (ctx) => {});
+
 koa
-  .use(router.routes())
-  .use(router.allowedMethods());
+  .use(require('koa-body')())
+  .use(router.allowedMethods())
+  .use(router.routes());
 
 const server = koa.listen(PORT);
 
