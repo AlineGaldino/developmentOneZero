@@ -9,60 +9,85 @@ const PORT = process.env.PORT || 3000;
 
 const Koa = require('koa');
 const Router = require('koa-router');
+const BodyParser = require('koa-bodyparser');
 
 const koa = new Koa();
 var router = new Router();
-
-let users = [
-  {
-    name: 'Elizabeth Swann',
-    email: 'swann@example.com',
-    age: '25',
-  },
-  {
-    name: 'Will Turner',
-    email: 'turner@example.com',
-    age: '22',
-  },
-  {
-    name: 'Hector Barbossa',
-    email: 'barbossa@example.com',
-    age: '50',
-  },
-];
 
 //rota simples pra testar se o servidor está online
 router.get('/', async (ctx) => {
   ctx.body = `Seu servidor esta rodando em http://localhost:${PORT}`; //http://localhost:3000/
 });
 
+koa.use(BodyParser());
+
+let users = [
+  {
+    id:0,
+    name: 'Elizabeth Swann',
+    email: 'swann@example.com',
+    age: 25,
+  },
+  {
+    id:1,
+    name: 'Will Turner',
+    email: 'turner@example.com',
+    age: 22,
+  },
+  {
+    id:2,
+    name: 'Hector Barbossa',
+    email: 'barbossa@example.com',
+    age: 50,
+  },
+];
+
 //As rotas devem ficar em arquivos separados, /src/controllers/userController.js por exemplo
+router.get('/users', read);
+router.get('/user/:id', readId)
+router.post('/create', add);
+router.put('/update', update);
+router.delete('/deleted', deleteUser);
 
-//rota que lista todos os usuarios
-router.get('/users', (ctx) => {
-  ctx.status = 200;
+async function read(ctx){
   ctx.body = users
-});
+}
 
-//rota que lista um usuario por id
-router.get('/user/:id', (ctx) => {
+async function readId(ctx){
   ctx.status = 200;
   ctx.body = users[ctx.params.id]
-});
+}
 
-//rota que edita um usuario já existente
-router.post('/userUpdate/:id', (ctx) => {
-  ctx.body = Object.assign(users[ctx.params.id], ctx.request.body);
-});
+async function add(ctx){
+  var userimport = ctx.request.body;
+  users.push(userimport)
+  ctx.body = 'User created!'
+}
 
-//rota que cria um usuario novo, preciso colocar pra ele mostrar todos juntos depois também
-router.post('/user/:id', (ctx) => {});
+async function update(ctx){
+  let userimport = ctx.request.body;
+  const index = users.findIndex((e) => e.id === userimport.id)
+  if(index === -1){
+    data.push(userimport)
+    ctx.body = 'User created!'
+  } else {
+    users[index] = userimport
+    message = 'User update!'
+  }
+}
 
-//rota que deleta um usuario já existente
-router.delete('/user/:id', (ctx) => {});
+async function deleteUser(ctx){
+  let userimport = ctx.request.body;
+  const index = users.findIndex((e) => e.id === userimport.id)
+  if(index === -1){
+    ctx.body = 'User not found!'
+  } else {
+    delete users[index];
+    ctx.body = 'User deleted!'
+  }
+}
 
 koa
-  .use(require('koa-body')())
   .use(router.allowedMethods())
   .use(router.routes());
 
