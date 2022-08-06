@@ -21,49 +21,13 @@ router.get('/', async (ctx) => {
 
 koa.use(BodyParser());
 
-/*
-const userSchema = {
-  title: "Schema do Usuario, define como é o usuario, linha 24 do teste",
-  type: "object",
-  required: ['name', 'email', 'age'],
-  properties: {
-      name: {
-          type: 'string'
-      },
-      email: {
-          type: 'string'
-      },
-      age: {
-          type: 0
-      }
-  }
-}
 
-let users = [userSchema.find]
-*/
-
-let users = [
-  {
-    name: 'Elizabeth Swann',
-    email: 'swann@example.com',
-    age: 25,
-  },
-  {
-    name: 'Will Turner',
-    email: 'turner@example.com',
-    age: 22,
-  },
-  {
-    name: 'Hector Barbossa',
-    email: 'barbossa@example.com',
-    age: 50,
-  },
-];
+let users = [];
 
 
 //As rotas devem ficar em arquivos separados, /src/controllers/userController.js por exemplo
 router.get('/users', read);
-router.get('/user', readId)
+router.get('/user', readName)
 router.post('/user', add);
 router.put('/user', update);
 router.delete('/user', deleteUser);
@@ -73,7 +37,7 @@ async function read(ctx) {
   ctx.body = users
 }
 
-async function readId(ctx) {
+async function readName(ctx) {
   let userimport = ctx.request.body;
   const index = users.findIndex((e) => e.name === userimport.name)
   if (index === -1) {
@@ -91,21 +55,6 @@ async function add(ctx) {
   ctx.status = 201;
   ctx.body = 'User created!'
 }
-
-
-/*
-async function add(ctx) {
-  let userVerify = ctx.request.body.find(({age}) => age < 18)
-  let userimport = ctx.request.body;
-  if (userVerify === true){
-    ctx.body = 'User cannot be created'
-  } else {
-    users.push(userimport)
-    ctx.status = 200;
-    ctx.body = 'User created!'
-  }
-}
-*/
 
 async function update(ctx) {
   let userimport = ctx.request.body;
