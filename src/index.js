@@ -20,6 +20,7 @@ router.get('/', async (ctx) => {
 });
 
 koa.use(BodyParser());
+
 /*
 const userSchema = {
   title: "Schema do Usuario, define como é o usuario, linha 24 do teste",
@@ -43,19 +44,16 @@ let users = [userSchema.find]
 
 let users = [
   {
-    id: 0,
     name: 'Elizabeth Swann',
     email: 'swann@example.com',
     age: 25,
   },
   {
-    id: 1,
     name: 'Will Turner',
     email: 'turner@example.com',
     age: 22,
   },
   {
-    id: 2,
     name: 'Hector Barbossa',
     email: 'barbossa@example.com',
     age: 50,
@@ -65,10 +63,10 @@ let users = [
 
 //As rotas devem ficar em arquivos separados, /src/controllers/userController.js por exemplo
 router.get('/users', read);
-router.get('/user/:id', readId)
-router.post('/create', add);
-router.put('/update', update);
-router.delete('/deleted', deleteUser);
+router.get('/user', readId)
+router.post('/user', add);
+router.put('/user', update);
+router.delete('/user', deleteUser);
 
 async function read(ctx) {
   ctx.status = 200;
@@ -76,18 +74,26 @@ async function read(ctx) {
 }
 
 async function readId(ctx) {
-  ctx.status = 200;
-  ctx.body = users[ctx.params.id]
+  let userimport = ctx.request.body;
+  const index = users.findIndex((e) => e.name === userimport.name)
+  if (index === -1) {
+    ctx.body = 'User not found!'
+    ctx.status = 404
+  } else {
+    ctx.status = 200;
+    ctx.body = users[index]
+  }
 }
 
-/*
 async function add(ctx) {
   let userimport = ctx.request.body;
   users.push(userimport)
+  ctx.status = 201;
   ctx.body = 'User created!'
 }
-*/
 
+
+/*
 async function add(ctx) {
   let userVerify = ctx.request.body.find(({age}) => age < 18)
   let userimport = ctx.request.body;
@@ -99,10 +105,11 @@ async function add(ctx) {
     ctx.body = 'User created!'
   }
 }
+*/
 
 async function update(ctx) {
   let userimport = ctx.request.body;
-  const index = users.findIndex((e) => e.id === userimport.id)
+  const index = users.findIndex((e) => e.name === userimport.name)
   if (index === -1) {
     users.push(userimport)
     ctx.body = 'User created!'
@@ -114,12 +121,14 @@ async function update(ctx) {
 
 async function deleteUser(ctx) {
   let userimport = ctx.request.body;
-  const index = users.findIndex((e) => e.id === userimport.id)
+  const index = users.findIndex((e) => e.name === userimport.name)
   if (index === -1) {
     ctx.body = 'User not found!'
+    ctx.status = 404
   } else {
     delete users[index];
     ctx.body = 'User deleted!'
+    ctx.status = 200
   }
 }
 
