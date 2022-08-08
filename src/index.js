@@ -43,7 +43,7 @@ let users = [
 //As rotas devem ficar em arquivos separados, /src/controllers/userController.js por exemplo
 router.get('/users', read);
 router.get('/user', readName)
-router.post('/user', add);
+router.post('/user/add', add, ShowAdd);
 router.put('/user', update);
 router.delete('/user', deleteUser);
 
@@ -69,6 +69,10 @@ async function add(ctx) {
   users.push(userimport)
   ctx.status = 201;
   ctx.body = 'User created!'
+}
+
+async function ShowAdd(ctx){
+  await ctx.render('add');
 }
 
 async function update(ctx) {
