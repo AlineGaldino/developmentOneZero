@@ -10,20 +10,35 @@ const PORT = process.env.PORT || 3000;
 const Koa = require('koa');
 const Router = require('koa-router');
 const BodyParser = require('koa-bodyparser');
+const path = require('path');
+const render = require('koa-ejs');
 
 const koa = new Koa();
 var router = new Router();
 
-//rota simples pra testar se o servidor está online
+render(koa, {
+  root: path.join(__dirname, 'views',),
+  layout: 'layout',
+  viewExt:'html',
+  cache: false,
+  debug: false
+})
+
 router.get('/', async (ctx) => {
-  ctx.body = `Seu servidor esta rodando em http://localhost:${PORT}`; //http://localhost:3000/
+  await ctx.render('index',{
+    users: users
+  })
 });
 
 koa.use(BodyParser());
 
-
-let users = [];
-
+let users = [
+  {
+    name: "Elizabeth Swann",
+    email: "swann@example.com",
+    age: 18 
+  }
+];
 
 //As rotas devem ficar em arquivos separados, /src/controllers/userController.js por exemplo
 router.get('/users', read);
