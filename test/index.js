@@ -66,7 +66,7 @@ describe('Testes da aplicaçao', () => {
             .end(function (err, res) {
                 expect(err).to.be.null;
                 expect(res).to.have.status(200);
-                expect(res.body.rows).to.eql([]);
+                expect(res.body.rows).to.eql();
                 done();
             });
     });
@@ -194,13 +194,13 @@ describe('Testes da aplicaçao', () => {
             });
     });
 
-    it('deveria ser uma lista com pelomenos 5 usuarios', function (done) {
+    it('deveria ser uma lista com pelo menos 5 usuarios', function (done) {
         chai.request(app)
             .get('/users')
             .end(function (err, res) {
                 expect(err).to.be.null;
                 expect(res).to.have.status(200);
-                expect(res.body.total).to.be.at.least(5);
+                expect(res.body.total).to.equal(5);
                 done();
             });
     });
